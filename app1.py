@@ -12,6 +12,9 @@ def crear_features(X):
     X['interaccion'] = X['actividad'] * X['sueno'] * X['estres']
     return X
 
+import sys
+sys.modules['__main__'].crear_features = crear_features
+
 # Cargar modelo
 modelo = joblib.load("modelo_bienestar.pkl")
 
