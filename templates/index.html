@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BIENESTARE AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0a0f1c;
+    color: white;
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 20px;
+}
+
+.header h1 {
+    color: #00e5ff;
+}
+
+.header p {
+    color: #aaa;
+    font-size: 13px;
+}
+
+/* APP MOBILE STYLE */
+.container {
+    max-width: 420px;
+    margin: auto;
+    padding: 10px;
+}
+
+/* CARD */
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 15px;
+}
+
+/* INPUT */
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    margin-top: 8px;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #00e5ff;
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* RESULTADO */
+#valor {
+    font-size: 45px;
+    text-align: center;
+}
+
+/* RECOMENDACIONES */
+.rec {
+    background: rgba(0,229,255,0.1);
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 8px;
+}
+
+/* SIMULADOR */
+.simulador input {
+    width: 30%;
+}
+
+/* RESPONSIVE */
+@media(max-width:500px){
+    .simulador input {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🧠 BIENESTARE AI</h1>
+<p>Predicción inteligente de tu bienestar basada en tus hábitos diarios.</p>
+</div>
+
+<div class="container">
+
+<!-- INPUTS -->
+<div class="card">
+<h3>Datos</h3>
+
+<label>Sueño</label>
+<input type="number" id="sueno" min="0" max="10" value="0">
+
+<label>Actividad</label>
+<input type="number" id="actividad" min="0" max="10" value="0">
+
+<label>Estrés</label>
+<input type="number" id="estres" min="0" max="10" value="0">
+
+<button onclick="predecir()">Analizar</button>
+</div>
+
+<!-- RESULTADO -->
+<div class="card">
+<h3>Resultado</h3>
+<div id="valor">0</div>
+<canvas id="grafico"></canvas>
+<div id="estado"></div>
+</div>
+
+<!-- RECOMENDACIONES -->
+<div class="card">
+<h3>Recomendaciones</h3>
+<div id="recomendaciones"></div>
+</div>
+
+<!-- SIMULADOR -->
+<div class="card simulador">
+<h3>Simulador</h3>
+<p>¿Qué pasaría si mejoras tus hábitos?</p>
+
+<input type="number" id="sim_sueno" placeholder="Sueño">
+<input type="number" id="sim_actividad" placeholder="Actividad">
+<input type="number" id="sim_estres" placeholder="Estrés">
+
+<button onclick="simular()">Simular</button>
+
+<div id="sim_resultado"></div>
+</div>
+
+</div>
+
+<script>
+let chart;
+
+function animarValor(final){
+    let actual = 0;
+    let intervalo = setInterval(()=>{
+        actual += final/30;
+        if(actual >= final){
+            actual = final;
+            clearInterval(intervalo);
+        }
+        document.getElementById("valor").innerText = Math.round(actual);
+    },20);
+}
+
+function crearGrafico(valor){
+    let ctx = document.getElementById("grafico").getContext("2d");
+
+    if(chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ["Bienestar", "Restante"],
+            datasets: [{
+                data: [valor, 300-valor]
+            }]
+        }
+    });
+}
+
+function predecir(){
+    let sueno = +document.getElementById("sueno").value;
+    let actividad = +document.getElementById("actividad").value;
+    let estres = +document.getElementById("estres").value;
+
+    fetch("/predict", {
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({sueno, actividad, estres})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+
+        let valor = Math.max(0, Math.min(data.prediccion,300));
+
+        animarValor(valor);
+        crearGrafico(valor);
+
+        // ESTADO
+        let estado = valor>220?"🔥 Excelente":
+                     valor>140?"🙂 Medio":
+                     "⚠️ Bajo";
+
+        document.getElementById("estado").innerText = estado;
+
+        // RECOMENDACIONES
+        let rec = document.getElementById("recomendaciones");
+        rec.innerHTML = "";
+
+        function add(texto){
+            rec.innerHTML += `<div class="rec">${texto}</div>`;
+        }
+
+        if(estres>6) add("Reduce el estrés (+30 pts)");
+        if(sueno<6) add("Dormir más mejora bienestar (+40 pts)");
+        if(actividad<4) add("Más actividad física (+25 pts)");
+        if(rec.innerHTML==="") add("Excelente equilibrio");
+
+    });
+}
+
+function simular(){
+    let sueno = +document.getElementById("sim_sueno").value || 0;
+    let actividad = +document.getElementById("sim_actividad").value || 0;
+    let estres = +document.getElementById("sim_estres").value || 0;
+
+    fetch("/predict", {
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({sueno, actividad, estres})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        let valor = Math.max(0, Math.min(data.prediccion,300));
+        document.getElementById("sim_resultado").innerText =
+            "Nuevo bienestar: " + Math.round(valor);
+    });
+}
+</script>
+
+</body>
+</html>
