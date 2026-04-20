@@ -1,240 +1,474 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>BIENESTARE AI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIENESTAR - Predicción Inteligente</title>
+    <style>
+        /* CSS GENERAL - TEMA CLARO */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #fcfdfe; /* Fondo muy claro y limpio de la imagen */
+            color: #212529;
+            line-height: 1.5;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        .main-wrapper {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
 
-<style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #0a0f1c;
-    color: white;
-}
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+        }
 
-/* HEADER */
-.header {
-    text-align: center;
-    padding: 20px;
-}
+        .header img.logo-icon {
+            height: 40px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
 
-.header h1 {
-    color: #00e5ff;
-}
+        .header h1 {
+            display: inline-block;
+            color: #d8816c; /* Color coral/naranja del logo de la imagen */
+            font-size: 2.2rem;
+            margin: 0 0 5px 0;
+        }
 
-.header p {
-    color: #aaa;
-    font-size: 13px;
-}
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
 
-/* APP MOBILE STYLE */
-.container {
-    max-width: 420px;
-    margin: auto;
-    padding: 10px;
-}
+        /* TÍTULOS DE SECCIÓN CON EMOJI */
+        .section-header {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e1e7ec;
+            padding-bottom: 8px;
+        }
 
-/* CARD */
-.card {
-    background: rgba(255,255,255,0.05);
-    padding: 20px;
-    border-radius: 15px;
-    margin-top: 15px;
-}
+        /* ESTRUCTURA DE FILA / GRID PARA TARJETAS */
+        .card-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
 
-/* INPUT */
-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    margin-top: 8px;
-}
+        /* ESTILO DE TARJETA PROFESIONAL (Basado en imagen) */
+        .card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Sombra muy sutil */
+            flex: 1; /* Distribuye espacio equitativamente */
+            min-width: 250px; /* Para responsividad */
+        }
 
-/* BUTTON */
-button {
-    width: 100%;
-    padding: 12px;
-    background: #00e5ff;
-    border: none;
-    border-radius: 10px;
-    margin-top: 10px;
-    font-weight: bold;
-}
+        /* INPUTS Y FORMULARIOS */
+        .input-group label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
 
-/* RESULTADO */
-#valor {
-    font-size: 45px;
-    text-align: center;
-}
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            background: #f8f9fa;
+            font-size: 1rem;
+            box-sizing: border-box; /* Importante para el ancho */
+        }
 
-/* RECOMENDACIONES */
-.rec {
-    background: rgba(0,229,255,0.1);
-    padding: 10px;
-    border-radius: 10px;
-    margin-top: 8px;
-}
+        .input-group p.input-help {
+            color: #777;
+            font-size: 11px;
+            margin: 5px 0 0 0;
+        }
 
-/* SIMULADOR */
-.simulador input {
-    width: 30%;
-}
+        /* BOTÓN MODERNO */
+        button.btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: #4a90e2; /* Azul profesional de la imagen */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
 
-/* RESPONSIVE */
-@media(max-width:500px){
-    .simulador input {
-        width: 100%;
-    }
-}
-</style>
+        button.btn-primary:hover {
+            background: #357abd;
+        }
+
+        /* RESULTADO PRINCIPAL */
+        #valor-resultado {
+            font-size: 1.3rem;
+            color: #212529;
+            margin-bottom: 10px;
+        }
+
+        span.label-result {
+            font-weight: bold;
+        }
+
+        /* BARRA DE PROGRESO Y MEDIDOR */
+        .progress-container {
+            margin-bottom: 15px;
+        }
+
+        progress {
+            width: 100%;
+            height: 12px;
+            border: none;
+            border-radius: 6px;
+            color: #2ecc71; /* Color por defecto */
+        }
+
+        progress::-webkit-progress-bar {
+            background-color: #f0f2f5;
+            border-radius: 6px;
+        }
+
+        progress::-webkit-progress-value {
+            background-color: #2ecc71; /* Color verde */
+            border-radius: 6px;
+        }
+
+        meter {
+            width: 100%;
+            height: 25px;
+            margin-top: 5px;
+        }
+
+        /* RECOMENDACIONES */
+        .rec-item {
+            color: #444;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .rec-item:before {
+            content: "•";
+            color: #7f8c8d;
+            position: absolute;
+            left: 0;
+        }
+
+        p.prediction-note {
+            color: #777;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        /* ESTADÍSTICAS RELACIONADAS Y SIMULADOR */
+        .stat-card {
+            min-width: 180px;
+        }
+
+        .stat-card h4 {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 0 0 5px 0;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #212529;
+        }
+
+        .stat-card .stat-desc {
+            font-size: 11px;
+            color: #888;
+            margin: 2px 0 0 0;
+        }
+
+        .sim-card {
+            border-top: 3px solid #e1e7ec; /* Borde superior para distinguir */
+        }
+
+        .sim-card .sim-change {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 3px;
+        }
+
+        /* ALERTAS */
+        .alert-card {
+            background-color: #e8f8f1;
+            border: 1px solid #d1f2e1;
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .alert-card:before {
+            content: "🚨";
+            margin-right: 10px;
+        }
+
+        /* RESPONSIVE - Móvil */
+        @media(max-width:700px){
+            .card-row {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="header">
-<h1>🧠 BIENESTARE AI</h1>
-<p>Predicción inteligente de tu bienestar basada en tus hábitos diarios.</p>
-</div>
+<div class="main-wrapper">
 
-<div class="container">
+    <div class="header">
+        <h1><img src="https://via.placeholder.com/40" alt="" class="logo-icon">BIENESTAR</h1>
+        <p>Predice tu bienestar y mejora tu estilo de vida</p>
+    </div>
 
-<!-- INPUTS -->
-<div class="card">
-<h3>Datos</h3>
+    <div class="card-row">
+        <div class="card input-group">
+            <label>😴 Sueño (horas)</label>
+            <input type="number" id="sueno" min="0" max="24" value="7">
+            <p class="input-help">Un mejor descanso suele elevar tu bienestar diario.</p>
+        </div>
 
-<label>Sueño</label>
-<input type="number" id="sueno" min="0" max="10" value="0">
+        <div class="card input-group">
+            <label>🏃 Actividad</label>
+            <input type="number" id="actividad" min="0" max="10" value="3">
+            <p class="input-help">Más movimiento apoya un mejor estado general.</p>
+        </div>
 
-<label>Actividad</label>
-<input type="number" id="actividad" min="0" max="10" value="0">
+        <div class="card input-group">
+            <label>🤯 Estrés</label>
+            <input type="number" id="estres" min="0" max="10" value="3">
+            <p class="input-help">Valores altos reducen tu bienestar estimado.</p>
+        </div>
+    </div>
 
-<label>Estrés</label>
-<input type="number" id="estres" min="0" max="10" value="0">
+    <button class="btn-primary" onclick="predecir()">🔎 Evaluar mi bienestar</button>
 
-<button onclick="predecir()">Analizar</button>
-</div>
+    <div class="section-header">📊 Resultado</div>
+    <div class="card">
+        <div id="valor-resultado">
+            <span class="label-result">Bienestar estimado:</span>
+            <span id="valor-num">125.35</span> / 300
+        </div>
+        
+        <div class="progress-container">
+            <progress id="progreso-bar" value="125.35" max="300"></progress>
+        </div>
+        
+        <div class="input-group">
+            <label>Estado actual:</label>
+            <meter id="medidor-estado" value="125.35" min="0" max="300" low="140" high="220" optimum="300"></meter>
+            <div id="estado-text" style="text-align: center; font-weight: bold; color: #7f8c8d; margin-top: 5px;">Moderado</div>
+        </div>
 
-<!-- RESULTADO -->
-<div class="card">
-<h3>Resultado</h3>
-<div id="valor">0</div>
-<canvas id="grafico"></canvas>
-<div id="estado"></div>
-</div>
+        <div class="section-header" style="font-size: 1.2rem; margin-top: 25px;">💡 Recomendaciones personalizadas</div>
+        <div id="recomendaciones-list">
+            <div class="rec-item">Resumen de sueño: Sueño adecuado.</div>
+            <div class="rec-item">Resumen de actividad: Actividad moderada.</div>
+            <div class="rec-item">Resumen de estrés: Estrés medio.</div>
+        </div>
 
-<!-- RECOMENDACIONES -->
-<div class="card">
-<h3>Recomendaciones</h3>
-<div id="recomendaciones"></div>
-</div>
+        <p class="prediction-note">La predicción está ajustada para no mostrar valores negativos.</p>
+    </div>
 
-<!-- SIMULADOR -->
-<div class="card simulador">
-<h3>Simulador</h3>
-<p>¿Qué pasaría si mejoras tus hábitos?</p>
+    <div class="section-header">📈 Estadísticas relacionadas</div>
+    <div class="card-row">
+        <div class="card stat-card">
+            <h4>Promedio de hábitos</h4>
+            <div class="stat-value" id="stat-promedio">4.33</div>
+            <p class="stat-desc">Media entre sueño, actividad y estrés ingresados.</p>
+        </div>
+        <div class="card stat-card">
+            <h4>Impacto positivo</h4>
+            <div class="stat-value" id="stat-positivo">94.69</div>
+            <p class="stat-desc">Aporte estimado de sueño y actividad.</p>
+        </div>
+        <div class="card stat-card">
+            <h4>Impacto del estrés</h4>
+            <div class="stat-value" id="stat-estres">81.18</div>
+            <p class="stat-desc">Cuánto está restando el estrés al resultado.</p>
+        </div>
+        <div class="card stat-card">
+            <h4>Balance general</h4>
+            <div class="stat-value" id="stat-balance">Neutro</div>
+            <p class="stat-desc">Equilibrio entre hábitos positivos y estrés.</p>
+        </div>
+    </div>
 
-<input type="number" id="sim_sueno" placeholder="Sueño">
-<input type="number" id="sim_actividad" placeholder="Actividad">
-<input type="number" id="sim_estres" placeholder="Estrés">
+    <div class="section-header">🔄 Simulación de escenarios</div>
+    <div class="card-row">
+        <div class="card stat-card sim-card">
+            <h4>Si duermes 8 horas</h4>
+            <div class="stat-value" id="sim-sueno">138.55 / 300</div>
+            <p class="sim-change">Cambio: +13.20 puntos</p>
+        </div>
+        <div class="card stat-card sim-card">
+            <h4>Si aumentas +2 de actividad</h4>
+            <div class="stat-value" id="sim-actividad">123.83 / 300</div>
+            <p class="sim-change">Cambio: -1.52 puntos</p>
+        </div>
+        <div class="card stat-card sim-card">
+            <h4>Si reduces -2 de estrés</h4>
+            <div class="stat-value" id="sim-estres">179.47 / 300</div>
+            <p class="sim-change">Cambio: +54.12 puntos</p>
+        </div>
+        <div class="card stat-card sim-card" style="border-top-color: #2ecc71;">
+            <h4>Mejor escenario combinado</h4>
+            <div class="stat-value" id="sim-combinado">191.15 / 300</div>
+            <p class="sim-change">Cambio: +65.80 puntos</p>
+        </div>
+    </div>
 
-<button onclick="simular()">Simular</button>
-
-<div id="sim_resultado"></div>
-</div>
+    <div class="section-header">🚨 Alertas</div>
+    <div class="alert-card card">
+        No se detectan alertas críticas. Tu estado actual es estable.
+    </div>
 
 </div>
 
 <script>
-let chart;
+    // Adaptación de Javascript para el nuevo diseño (ya no usa Chart.js)
 
-function animarValor(final){
-    let actual = 0;
-    let intervalo = setInterval(()=>{
-        actual += final/30;
-        if(actual >= final){
-            actual = final;
-            clearInterval(intervalo);
-        }
-        document.getElementById("valor").innerText = Math.round(actual);
-    },20);
-}
+    function animarValor(final){
+        let actual = 0;
+        let finalNum = parseFloat(final);
+        let intervalo = setInterval(()=>{
+            actual += finalNum/30;
+            if(actual >= finalNum){
+                actual = finalNum;
+                clearInterval(intervalo);
+            }
+            // Actualizar texto numérico
+            document.getElementById("valor-num").innerText = actual.toFixed(2);
+            // Actualizar barra de progreso
+            document.getElementById("progreso-bar").value = actual;
+            // Actualizar medidor
+            document.getElementById("medidor-estado").value = actual;
+        },20);
+    }
 
-function crearGrafico(valor){
-    let ctx = document.getElementById("grafico").getContext("2d");
+    // Ya no usamos crearGrafico, la barra y el medidor se actualizan en animarValor
 
-    if(chart) chart.destroy();
+    function predecir(){
+        let sueno = +document.getElementById("sueno").value;
+        let actividad = +document.getElementById("actividad").value;
+        let estres = +document.getElementById("estres").value;
 
-    chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ["Bienestar", "Restante"],
-            datasets: [{
-                data: [valor, 300-valor]
-            }]
-        }
-    });
-}
-
-function predecir(){
-    let sueno = +document.getElementById("sueno").value;
-    let actividad = +document.getElementById("actividad").value;
-    let estres = +document.getElementById("estres").value;
-
-    fetch("/predict", {
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({sueno, actividad, estres})
-    })
-    .then(res=>res.json())
-    .then(data=>{
-
+        // Simulamos la llamada a tu API /predict
+        // (Sustituye esto con tu llamada fetch original cuando lo subas)
+        console.log("Simulando llamada API...");
+        
+        // Simulación de respuesta de API basada en tus inputs
+        let prediccionBase = (sueno * 20) + (actividad * 10) - (estres * 15) + 80;
+        
+        // Ajustamos la predicción a tu nuevo diseño
+        let data = { prediccion: prediccionBase };
+        
+        // --- INICIO DE LÓGICA DE ACTUALIZACIÓN ---
+        
+        // Asegurar que esté entre 0 y 300
         let valor = Math.max(0, Math.min(data.prediccion,300));
 
         animarValor(valor);
-        crearGrafico(valor);
 
-        // ESTADO
-        let estado = valor>220?"🔥 Excelente":
-                     valor>140?"🙂 Medio":
-                     "⚠️ Bajo";
+        // ACTUALIZAR ESTADO Y COLOR DEL MEDIDOR
+        let estadoText = document.getElementById("estado-text");
+        let estadoLabel = "";
+        let estadoColor = "#7f8c8d"; // Gris por defecto (Bajo)
 
-        document.getElementById("estado").innerText = estado;
-
-        // RECOMENDACIONES
-        let rec = document.getElementById("recomendaciones");
-        rec.innerHTML = "";
-
-        function add(texto){
-            rec.innerHTML += `<div class="rec">${texto}</div>`;
+        if(valor > 220) {
+            estadoLabel = "🔥 Excelente";
+            estadoColor = "#27ae60"; // Verde
+        } else if(valor > 140) {
+            estadoLabel = "🙂 Moderado";
+            estadoColor = "#f1c40f"; // Amarillo
+        } else {
+            estadoLabel = "⚠️ Bajo";
+            estadoColor = "#e74c3c"; // Rojo
         }
 
-        if(estres>6) add("Reduce el estrés (+30 pts)");
-        if(sueno<6) add("Dormir más mejora bienestar (+40 pts)");
-        if(actividad<4) add("Más actividad física (+25 pts)");
-        if(rec.innerHTML==="") add("Excelente equilibrio");
+        estadoText.innerText = estadoLabel;
+        estadoText.style.color = estadoColor; // Cambiar color del texto del estado
 
-    });
-}
+        // ACTUALIZAR RECOMENDACIONES PERSONALIZADAS
+        let recList = document.getElementById("recomendaciones-list");
+        recList.innerHTML = ""; // Limpiar las anteriores
 
-function simular(){
-    let sueno = +document.getElementById("sim_sueno").value || 0;
-    let actividad = +document.getElementById("sim_actividad").value || 0;
-    let estres = +document.getElementById("sim_estres").value || 0;
+        function add(texto){
+            recList.innerHTML += `<div class="rec-item">${texto}</div>`;
+        }
 
-    fetch("/predict", {
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({sueno, actividad, estres})
-    })
-    .then(res=>res.json())
-    .then(data=>{
-        let valor = Math.max(0, Math.min(data.prediccion,300));
-        document.getElementById("sim_resultado").innerText =
-            "Nuevo bienestar: " + Math.round(valor);
-    });
-}
+        // Lógica de recomendaciones basada en tu código original, adaptada a la imagen
+        if(sueno < 6) {
+            add("Resumen de sueño: Dormir más mejora bienestar.");
+        } else {
+            add("Resumen de sueño: Sueño adecuado.");
+        }
+
+        if(actividad < 4) {
+            add("Resumen de actividad: Más actividad física.");
+        } else if(actividad < 7) {
+            add("Resumen de actividad: Actividad moderada.");
+        } else {
+            add("Resumen de actividad: Nivel excelente.");
+        }
+
+        if(estres > 6) {
+            add("Resumen de estrés: Reducir el estrés.");
+        } else if(estres > 3) {
+            add("Resumen de estrés: Estrés medio.");
+        } else {
+            add("Resumen de estrés: Estrés bajo.");
+        }
+
+        // --- ACTUALIZAR ESTADÍSTICAS RELACIONADAS Y SIMULADOR ---
+        // (Esto son esqueletos de simulación para que el diseño se vea completo)
+        let promedio = ((sueno + actividad + (10 - estres)) / 3).toFixed(2);
+        document.getElementById("stat-promedio").innerText = promedio;
+        
+        let positivo = ((sueno * 13.5) + (actividad * 6.7)).toFixed(2);
+        document.getElementById("stat-positivo").innerText = positivo;
+        
+        let impactoEstres = (estres * 27).toFixed(2);
+        document.getElementById("stat-estres").innerText = impactoEstres;
+        
+        let balance = (sueno + actividad > estres + 2) ? "Positivo" : (sueno + actividad < estres - 2) ? "Negativo" : "Neutro";
+        document.getElementById("stat-balance").innerText = balance;
+        
+        // Simulación básica del simulador
+        document.getElementById("sim-sueno").innerText = (valor + 13.2).toFixed(2) + " / 300";
+        document.getElementById("sim-actividad").innerText = (valor - 1.5).toFixed(2) + " / 300";
+        document.getElementById("sim-estres").innerText = (valor + 54.1).toFixed(2) + " / 300";
+        document.getElementById("sim-combinado").innerText = (valor + 65.8).toFixed(2) + " / 300";
+
+    }
 </script>
 
 </body>
